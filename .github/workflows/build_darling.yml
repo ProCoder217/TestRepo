@@ -20,7 +20,8 @@ jobs:
             libtiff-devel.x86_64 libtiff-devel.i686 \
             libXrandr-devel.x86_64 libXrandr-devel.i686 \
             libXcursor-devel.x86_64 libXcursor-devel.i686 \
-            giflib-devel.x86_64 giflib-devel.i686\
+            giflib-devel.x86_64 giflib-devel.i686
+            
       - name: Clone Darling
         run: git clone --recursive https://github.com/darlinghq/darling.git
         
