@@ -21,7 +21,10 @@ jobs:
             libXrandr-devel.x86_64 libXrandr-devel.i686 \
             libXcursor-devel.x86_64 libXcursor-devel.i686 \
             giflib-devel.x86_64 giflib-devel.i686 \
-            libxkbfile-devel.x86_64 libxkbfile-devel.i686
+            libxkbfile-devel.x86_64 libxkbfile-devel.i686 \
+            ffmpeg-free-devel.x86_64 ffmpeg-free-devel.i686 \
+            alsa-lib-devel.x86_64 alsa-lib-devel.i686 \
+            pulseaudio-libs-devel.x86_64 pulseaudio-libs-devel.i686
             
       - name: Clone Darling
         run: git clone --recursive https://github.com/darlinghq/darling.git
