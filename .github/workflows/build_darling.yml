@@ -16,7 +16,11 @@ jobs:
             systemd-devel elfutils-libelf-devel cairo-devel freetype-devel.x86_64 freetype-devel.i686 \
             libjpeg-turbo-devel.x86_64 libjpeg-turbo-devel.i686 fontconfig-devel.x86_64 fontconfig-devel.i686 \
             libglvnd-devel.x86_64 libglvnd-devel.i686 mesa-libGL-devel.x86_64 mesa-libGL-devel.i686 \
-            mesa-libEGL-devel.x86_64 mesa-libEGL-devel.i686 git git-lfs kernel-devel kernel-headers tar gzip
+            mesa-libEGL-devel.x86_64 mesa-libEGL-devel.i686 git git-lfs kernel-devel kernel-headers tar gzip \
+            libtiff-devel.x86_64 libtiff-devel.i686 \
+            libXrandr-devel.x86_64 libXrandr-devel.i686 \
+            libXcursor-devel.x86_64 libXcursor-devel.i686 \
+            giflib-devel.x86_64 giflib-devel.i686ar gzip
             
       - name: Clone Darling
         run: git clone --recursive https://github.com/darlinghq/darling.git
