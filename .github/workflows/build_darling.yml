@@ -1,58 +1,38 @@
-name: Build Darling User-Space for Fedora
+name: Build Darling
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  build-darling:
+  build:
     runs-on: ubuntu-latest
     container:
-      image: fedora:latest  # Forces the runner to use a Fedora environment
+      image: fedora:latest # Using Fedora as per your environment
+
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # Crucial for Darling to get all its pieces
+
       - name: Install Build Dependencies
+        # Ensures multilib support (glibc-devel.i686) is present for the 32-bit build
         run: |
           dnf update -y
-          dnf install -y --skip-unavailable make cmake clang bison dbus-devel flex glibc-devel.i686 fuse-devel \
-            systemd-devel elfutils-libelf-devel cairo-devel freetype-devel.x86_64 freetype-devel.i686 \
-            libjpeg-turbo-devel.x86_64 libjpeg-turbo-devel.i686 fontconfig-devel.x86_64 fontconfig-devel.i686 \
-            libglvnd-devel.x86_64 libglvnd-devel.i686 mesa-libGL-devel.x86_64 mesa-libGL-devel.i686 \
-            mesa-libEGL-devel.x86_64 mesa-libEGL-devel.i686 git git-lfs kernel-devel kernel-headers tar gzip \
-            libtiff-devel.x86_64 libtiff-devel.i686 \
-            libXrandr-devel.x86_64 libXrandr-devel.i686 \
-            libXcursor-devel.x86_64 libXcursor-devel.i686 \
-            giflib-devel.x86_64 giflib-devel.i686 \
-            libxkbfile-devel.x86_64 libxkbfile-devel.i686 \
-            ffmpeg-free-devel.x86_64 ffmpeg-free-devel.i686 \
-            alsa-lib-devel.x86_64 alsa-lib-devel.i686 \
-            pulseaudio-libs-devel.x86_64 pulseaudio-libs-devel.i686 \
-            libbsd-devel.x86_64 libbsd-devel.i686 \
-            libglvnd-core-devel.x86_64 libglvnd-core-devel.i686
-            
-      - name: Clone Darling
-        run: git clone --recursive https://github.com/darlinghq/darling.git
-        
-      - name: Configure and Build (The Heavy Lifting)
+          dnf install -y cmake clang make glibc-devel.i686 glibc-devel 
+          # Note: Add any other specific dependencies Darling requires here
+
+      - name: Configure CMake
         run: |
-          cd darling
           mkdir build
           cd build
           cmake ..
-          make -j4  # GitHub runners have decent CPUs, let it rip
-          
-      - name: Stage the Files for Packaging
+
+      - name: Compile Project (Sequential Build)
         run: |
-          cd darling/build
-          # DESTDIR forces the 'install' command to dump files into a fake root folder 
-          # instead of the container's actual system.
-          make install DESTDIR=/github/workspace/darling-dist
-          
-      - name: Compress the Build
-        run: |
-          cd /github/workspace/darling-dist
-          tar -czvf /github/workspace/darling-prebuilt.tar.gz .
-          
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Darling-Prebuilt-Fedora
-          path: /github/workspace/darling-prebuilt.tar.gz
+          cd build
+          # Removed -j4 to prevent architecture race conditions during LibreSSL compilation
+          make
